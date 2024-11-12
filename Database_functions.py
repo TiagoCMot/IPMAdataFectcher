@@ -13,8 +13,9 @@ def create_tables(db_name):
             cursor = conn.cursor()
             
             # Create Observations table
-            cursor.execute('''CREATE TABLE IF NOT EXISTS Observations (
+            cursor.execute('''CREATE TABLE IF NOT EXISTS IPMAObservations (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
                                 date TEXT,
                                 temperature REAL,
                                 wind_speed REAL,
@@ -24,8 +25,9 @@ def create_tables(db_name):
                             )''')
             
             # Create Forecast5Days table
-            cursor.execute('''CREATE TABLE IF NOT EXISTS Forecast5Days (
+            cursor.execute('''CREATE TABLE IF NOT EXISTS IPMAForecast5Days (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
                                 dataUpdate TEXT,
                                 ForecastToday INTEGER,
                                 ForecastTomorrow INTEGER,
@@ -35,8 +37,9 @@ def create_tables(db_name):
                             )''')
             
             # Create Forecast table
-            cursor.execute('''CREATE TABLE IF NOT EXISTS Forecast (
+            cursor.execute('''CREATE TABLE IF NOT EXISTS IPMAForecast (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
                                 forecastDate TEXT,
                                 precipitaProb REAL,
                                 tMin REAL,

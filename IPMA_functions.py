@@ -94,11 +94,11 @@ def fetch_and_insert_observation_data(db_name, observation_station_code):
                 # Insert data into the database
                 for data_item in sorted_data_list:
                     # Check for existing entry with the same date
-                    cursor.execute("SELECT COUNT(*) FROM Observations WHERE date = ?", (data_item["date"],))
+                    cursor.execute("SELECT COUNT(*) FROM IPMAObservations WHERE date = ?", (data_item["date"],))
                     observation_exists = cursor.fetchone()[0]
 
                     if not observation_exists:
-                        cursor.execute('''INSERT OR IGNORE INTO Observations 
+                        cursor.execute('''INSERT OR IGNORE INTO IPMAObservations 
                                           (date, temperature, wind_speed, humidity, pressure, wind_direction)
                                           VALUES (?, ?, ?, ?, ?, ?)''',
                                        (data_item["date"], data_item["temperature"], data_item["wind_speed"],
@@ -143,12 +143,12 @@ def fetch_and_insert_forecast_data(db_name, city_code):
         response = requests.get(url_previsao)
         if response.status_code != 200:
             logging.info(f"Could not reach IPMA database to get forecast for the city of {city}!")
+            logging.info("hielo")
             return
         
         dados_previsao = response.json()
         forecast_update_date = dados_previsao["dataUpdate"]
         forecast_data = []
-
         # Parse each forecast entry
         for data in dados_previsao["data"]:
             forecast_date = data["forecastDate"] + "T00:00:00"
@@ -175,14 +175,14 @@ def fetch_and_insert_forecast_data(db_name, city_code):
             cursor = conn.cursor()
 
             # Check for existing entry with the same update date in Forecast5Days
-            cursor.execute("SELECT COUNT(*) FROM Forecast5Days WHERE dataUpdate = ?", (forecast_update_date,))
+            cursor.execute("SELECT COUNT(*) FROM IPMAForecast5Days WHERE dataUpdate = ?", (forecast_update_date,))
             exists = cursor.fetchone()[0]
 
             if not exists:
                 forecast_ids = []
                 for data in forecast_data:
                     # Insert individual forecast entry and get the inserted ID
-                    cursor.execute('''INSERT INTO Forecast (forecastDate, precipitaProb, tMin, tMax, predWindDir, idWeatherType, 
+                    cursor.execute('''INSERT INTO IPMAForecast (forecastDate, precipitaProb, tMin, tMax, predWindDir, idWeatherType, 
                                       classWindSpeed, longitude, latitude, classPrecInt)
                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                                    (data["forecastDate"], data["precipitaProb"], data["tMin"], data["tMax"], 
@@ -193,11 +193,11 @@ def fetch_and_insert_forecast_data(db_name, city_code):
                     forecast_ids.append(cursor.lastrowid)
 
                 # Insert the 5-day forecast summary with forecast IDs
-                cursor.execute('''INSERT INTO Forecast5Days (dataUpdate, ForecastToday, ForecastTomorrow, Forecast2DaysAfter, 
+                cursor.execute('''INSERT INTO IPMAForecast5Days (dataUpdate, ForecastToday, ForecastTomorrow, Forecast2DaysAfter, 
                                       Forecast3DaysAfter, Forecast4DaysAfter)
                                   VALUES (?, ?, ?, ?, ?, ?)''',
                                (forecast_update_date, *forecast_ids[:5]))  # Store up to 5 forecast references
                 
             logging.info(f"Forecast data successfully fetched and inserted into the database for the city of {city}!")
     except Exception as e:
-        logging.info(f"Could not reach IPMA database to get forecast for the city of {city}!")
+        logging.info(f"Could not reach IPMA database to get forecast for the city of {city}: {e}!")
