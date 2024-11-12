@@ -24,32 +24,59 @@ def create_tables(db_name):
                                 wind_direction REAL
                             )''')
             
-            # Create Forecast5Days table
+            # Create  Forecast5Days table
             cursor.execute('''CREATE TABLE IF NOT EXISTS IPMAForecast5Days (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
                                 dataUpdate TEXT,
-                                ForecastToday INTEGER,
-                                ForecastTomorrow INTEGER,
-                                Forecast2DaysAfter INTEGER,
-                                Forecast3DaysAfter INTEGER,
-                                Forecast4DaysAfter INTEGER
-                            )''')
-            
-            # Create Forecast table
-            cursor.execute('''CREATE TABLE IF NOT EXISTS IPMAForecast (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
-                                forecastDate TEXT,
-                                precipitaProb REAL,
-                                tMin REAL,
-                                tMax REAL,
-                                predWindDir TEXT,
-                                idWeatherType INTEGER,
-                                classWindSpeed INTEGER,
                                 longitude REAL,
                                 latitude REAL,
-                                classPrecInt INTEGER
+
+                                ForecastTodayDate TEXT,
+                                ForecastTodayPrecipitaProb REAL,
+                                ForecastTodayTMin REAL,
+                                ForecastTodayTMax REAL,
+                                ForecastTodayPredWindDir TEXT,
+                                ForecastTodayIDWeatherType REAL,
+                                ForecastTodayClassWindSpeed REAL,
+                                ForecastTodayClassPrecInt INTEGER,
+
+                                ForecastTomorrowDate TEXT,
+                                ForecastTomorrowPrecipitaProb REAL,
+                                ForecastTomorrowTMin REAL,
+                                ForecastTomorrowTMax REAL,
+                                ForecastTomorrowPredWindDir TEXT,
+                                ForecastTomorrowIDWeatherType REAL,
+                                ForecastTomorrowClassWindSpeed REAL,
+                                ForecastTomorrowClassPrecInt INTEGER,
+
+                                Forecast2DaysAfterDate TEXT,
+                                Forecast2DaysAfterPrecipitaProb REAL,
+                                Forecast2DaysAfterTMin REAL,
+                                Forecast2DaysAfterTMax REAL,
+                                Forecast2DaysAfterPredWindDir TEXT,
+                                Forecast2DaysAfterIDWeatherType REAL,
+                                Forecast2DaysAfterClassWindSpeed REAL,
+                                Forecast2DaysAfterClassPrecInt INTEGER,
+
+                                Forecast3DaysAfterDate TEXT,
+                                Forecast3DaysAfterPrecipitaProb REAL,
+                                Forecast3DaysAfterTMin REAL,
+                                Forecast3DaysAfterTMax REAL,
+                                Forecast3DaysAfterPredWindDir TEXT,
+                                Forecast3DaysAfterIDWeatherType REAL,
+                                Forecast3DaysAfterClassWindSpeed REAL,
+                                Forecast3DaysAfterClassPrecInt INTEGER,
+
+                                Forecast4DaysAfterDate TEXT,
+                                Forecast4DaysAfterPrecipitaProb REAL,
+                                Forecast4DaysAfterTMin REAL,
+                                Forecast4DaysAfterTMax REAL,
+                                Forecast4DaysAfterPredWindDir TEXT,
+                                Forecast4DaysAfterIDWeatherType REAL,
+                                Forecast4DaysAfterClassWindSpeed REAL,
+                                Forecast4DaysAfterClassPrecInt INTEGER
+
                             )''')
             
             print("Tables created successfully or already exist.")

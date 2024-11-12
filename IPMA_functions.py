@@ -179,24 +179,42 @@ def fetch_and_insert_forecast_data(db_name, city_code):
             exists = cursor.fetchone()[0]
 
             if not exists:
-                forecast_ids = []
-                for data in forecast_data:
-                    # Insert individual forecast entry and get the inserted ID
-                    cursor.execute('''INSERT INTO IPMAForecast (forecastDate, precipitaProb, tMin, tMax, predWindDir, idWeatherType, 
-                                      classWindSpeed, longitude, latitude, classPrecInt)
-                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                                   (data["forecastDate"], data["precipitaProb"], data["tMin"], data["tMax"], 
-                                    data["predWindDir"], data["idWeatherType"], data["classWindSpeed"], 
-                                    data["longitude"], data["latitude"], data["classPrecInt"]))
-                    
-                    # Retrieve the row ID of the inserted forecast and add it to forecast_ids
-                    forecast_ids.append(cursor.lastrowid)
 
-                # Insert the 5-day forecast summary with forecast IDs
-                cursor.execute('''INSERT INTO IPMAForecast5Days (dataUpdate, ForecastToday, ForecastTomorrow, Forecast2DaysAfter, 
-                                      Forecast3DaysAfter, Forecast4DaysAfter)
-                                  VALUES (?, ?, ?, ?, ?, ?)''',
-                               (forecast_update_date, *forecast_ids[:5]))  # Store up to 5 forecast references
+                 # Inserir previsão consolidada
+                cursor.execute('''INSERT INTO IPMAForecast5Days (dataUpdate, longitude, latitude, ForecastTodayDate, ForecastTodayPrecipitaProb, 
+                          ForecastTodayTMin, ForecastTodayTMax, ForecastTodayPredWindDir, ForecastTodayIDWeatherType, 
+                          ForecastTodayClassWindSpeed, ForecastTodayClassPrecInt, ForecastTomorrowDate, 
+                          ForecastTomorrowPrecipitaProb, ForecastTomorrowTMin, ForecastTomorrowTMax, 
+                          ForecastTomorrowPredWindDir, ForecastTomorrowIDWeatherType, ForecastTomorrowClassWindSpeed, 
+                          ForecastTomorrowClassPrecInt, Forecast2DaysAfterDate, Forecast2DaysAfterPrecipitaProb, 
+                          Forecast2DaysAfterTMin, Forecast2DaysAfterTMax, Forecast2DaysAfterPredWindDir, 
+                          Forecast2DaysAfterIDWeatherType, Forecast2DaysAfterClassWindSpeed, 
+                          Forecast2DaysAfterClassPrecInt, Forecast3DaysAfterDate, Forecast3DaysAfterPrecipitaProb, 
+                          Forecast3DaysAfterTMin, Forecast3DaysAfterTMax, Forecast3DaysAfterPredWindDir, 
+                          Forecast3DaysAfterIDWeatherType, Forecast3DaysAfterClassWindSpeed, 
+                          Forecast3DaysAfterClassPrecInt, Forecast4DaysAfterDate, Forecast4DaysAfterPrecipitaProb, 
+                          Forecast4DaysAfterTMin, Forecast4DaysAfterTMax, Forecast4DaysAfterPredWindDir, 
+                          Forecast4DaysAfterIDWeatherType, Forecast4DaysAfterClassWindSpeed, 
+                          Forecast4DaysAfterClassPrecInt)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                       (forecast_update_date, forecast_data[0]["longitude"], forecast_data[0]["latitude"],
+                        forecast_data[0]["forecastDate"], forecast_data[0]["precipitaProb"], forecast_data[0]["tMin"], forecast_data[0]["tMax"],
+                        forecast_data[0]["predWindDir"], forecast_data[0]["idWeatherType"], forecast_data[0]["classWindSpeed"],
+                        forecast_data[0]["classPrecInt"],
+                        forecast_data[1]["forecastDate"], forecast_data[1]["precipitaProb"], forecast_data[1]["tMin"], forecast_data[1]["tMax"],
+                        forecast_data[1]["predWindDir"], forecast_data[1]["idWeatherType"], forecast_data[1]["classWindSpeed"],
+                        forecast_data[1]["classPrecInt"],
+                        forecast_data[2]["forecastDate"], forecast_data[2]["precipitaProb"], forecast_data[2]["tMin"], forecast_data[2]["tMax"],
+                        forecast_data[2]["predWindDir"], forecast_data[2]["idWeatherType"], forecast_data[2]["classWindSpeed"],
+                        forecast_data[2]["classPrecInt"],
+                        forecast_data[3]["forecastDate"], forecast_data[3]["precipitaProb"], forecast_data[3]["tMin"], forecast_data[3]["tMax"],
+                        forecast_data[3]["predWindDir"], forecast_data[3]["idWeatherType"], forecast_data[3]["classWindSpeed"],
+                        forecast_data[3]["classPrecInt"],
+                        forecast_data[4]["forecastDate"], forecast_data[4]["precipitaProb"], forecast_data[4]["tMin"], forecast_data[4]["tMax"],
+                        forecast_data[4]["predWindDir"], forecast_data[4]["idWeatherType"], forecast_data[4]["classWindSpeed"],
+                        forecast_data[4]["classPrecInt"]))
+
+                conn.commit()
                 
             logging.info(f"Forecast data successfully fetched and inserted into the database for the city of {city}!")
     except Exception as e:
